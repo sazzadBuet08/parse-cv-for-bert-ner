@@ -153,14 +153,14 @@ with open("../output/train.txt", "w") as wf:
 
 with open("../output/dev.txt", "w") as wf:
     for i in range(200, 210):
-        if i>0:
+        if i>200:
             wf.write("\n")
         for token in all_tokens[i]:
             wf.write(token+'\n')
 
 with open("../output/test.txt", "w") as wf:
     for i in range(210, 220):
-        if i>0:
+        if i>210:
             wf.write("\n")
         for token in all_tokens[i]:
             wf.write(token+'\n')
