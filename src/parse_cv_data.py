@@ -1,12 +1,12 @@
 import json
 import numpy as np
 import sys
-import spacy
-nlp = spacy.load('en_core_web_sm')
+# import spacy
+# nlp = spacy.load('en_core_web_sm')
 
 json_data = None
 
-with open('/Users/habibullaharaphat/PycharmProjects/keras_sample/data/ner_in_resume.json', 'r', encoding="utf-8") as f:
+with open('../data/ner_in_resume.json', 'r', encoding="utf-8") as f:
     text = ""
     cnt = 0
     for line in f:
@@ -136,33 +136,33 @@ print(tokens)
 all_tokens = list()
 cv_cnt = 0
 
-for cv_data in json_data:
-    np_cv_map = init_mat(cv_data, key_to_idx)
-    tokens = parse_ner_tokens(cv_data, idx_to_key, np_cv_map)
-    all_tokens.append(tokens)
-    cv_cnt += 1
-    sys.stdout.write("\r%d%% completed" % cv_cnt)
-    sys.stdout.flush()
-
-with open("../output/train.txt", "w") as wf:
-    for i in range(0, 200):
-        if i>0:
-            wf.write("\n")
-        for token in all_tokens[i]:
-            wf.write(token+'\n')
-
-with open("../output/dev.txt", "w") as wf:
-    for i in range(200, 210):
-        if i>200:
-            wf.write("\n")
-        for token in all_tokens[i]:
-            wf.write(token+'\n')
-
-with open("../output/test.txt", "w") as wf:
-    for i in range(210, 220):
-        if i>210:
-            wf.write("\n")
-        for token in all_tokens[i]:
-            wf.write(token+'\n')
-
-print(all_tokens[0])
+# for cv_data in json_data:
+#     np_cv_map = init_mat(cv_data, key_to_idx)
+#     tokens = parse_ner_tokens(cv_data, idx_to_key, np_cv_map)
+#     all_tokens.append(tokens)
+#     cv_cnt += 1
+#     sys.stdout.write("\r%d%% completed" % cv_cnt)
+#     sys.stdout.flush()
+#
+# with open("../output/train.txt", "w") as wf:
+#     for i in range(0, 200):
+#         if i>0:
+#             wf.write("\n")
+#         for token in all_tokens[i]:
+#             wf.write(token+'\n')
+#
+# with open("../output/dev.txt", "w") as wf:
+#     for i in range(200, 210):
+#         if i>200:
+#             wf.write("\n")
+#         for token in all_tokens[i]:
+#             wf.write(token+'\n')
+#
+# with open("../output/test.txt", "w") as wf:
+#     for i in range(210, 220):
+#         if i>210:
+#             wf.write("\n")
+#         for token in all_tokens[i]:
+#             wf.write(token+'\n')
+#
+# print(all_tokens[0])
