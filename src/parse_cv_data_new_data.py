@@ -6,19 +6,25 @@ nlp = spacy.load('en_core_web_sm')
 
 json_data = None
 
-with open('../data/ner_in_resume.json', 'r', encoding="utf-8") as f:
-    text = ""
-    cnt = 0
+text = ""
+cnt = 0
+with open('../data/cv-tagging-enhanced-duration.json', 'r', encoding="utf-8") as f:
     for line in f:
         if cnt>0:
             text += ","
         text += ""+line
         cnt = cnt + 1
 
-    text = "[" + text + "]"
+with open('../data/cv-tagging-test.json', 'r', encoding="utf-8") as f:
+    for line in f:
+        if cnt>0:
+            text += ","
+        text += ""+line
+        cnt = cnt + 1
 
-    json_data = json.loads(text)
-
+text = "[" + text + "]"
+json_data = json.loads(text)
+print("data len:", len(json_data))
 print(json_data[0].keys())
 
 print(json_data[0]['annotation'])
@@ -123,46 +129,46 @@ def parse_ner_tokens(cv_data, idx_to_key, np_tag_array):
 
 
 key_to_idx, idx_to_key = create_label_map(json_data)
-print(key_to_idx)
-print(idx_to_key)
+print("key_to_idx", key_to_idx)
+print("idx_to_key", idx_to_key)
 
 np_cv_map = init_mat(json_data[0], key_to_idx)
-print(np_cv_map[60:70])
+print("np_cv_map", np_cv_map[60:70])
 
 tokens = parse_ner_tokens(json_data[0], idx_to_key, np_cv_map)
-print(tokens)
+print("tokens", tokens)
 
 
 all_tokens = list()
 cv_cnt = 0
 
-# for cv_data in json_data:
-#     np_cv_map = init_mat(cv_data, key_to_idx)
-#     tokens = parse_ner_tokens(cv_data, idx_to_key, np_cv_map)
-#     all_tokens.append(tokens)
-#     cv_cnt += 1
-#     sys.stdout.write("\r%d%% completed" % cv_cnt)
-#     sys.stdout.flush()
-#
-# with open("../output/train.txt", "w") as wf:
-#     for i in range(0, 200):
-#         if i>0:
-#             wf.write("\n")
-#         for token in all_tokens[i]:
-#             wf.write(token+'\n')
-#
-# with open("../output/dev.txt", "w") as wf:
-#     for i in range(200, 210):
-#         if i>200:
-#             wf.write("\n")
-#         for token in all_tokens[i]:
-#             wf.write(token+'\n')
-#
-# with open("../output/test.txt", "w") as wf:
-#     for i in range(210, 220):
-#         if i>210:
-#             wf.write("\n")
-#         for token in all_tokens[i]:
-#             wf.write(token+'\n')
-#
-# print(all_tokens[0])
+for cv_data in json_data:
+    np_cv_map = init_mat(cv_data, key_to_idx)
+    tokens = parse_ner_tokens(cv_data, idx_to_key, np_cv_map)
+    all_tokens.append(tokens)
+    cv_cnt += 1
+    sys.stdout.write("\r%d%% completed" % cv_cnt)
+    sys.stdout.flush()
+
+with open("../output/train.txt", "w") as wf:
+    for i in range(0, 187):
+        if i>0:
+            wf.write("\n")
+        for token in all_tokens[i]:
+            wf.write(token+'\n')
+
+with open("../output/dev.txt", "w") as wf:
+    for i in range(187, 197):
+        if i>187:
+            wf.write("\n")
+        for token in all_tokens[i]:
+            wf.write(token+'\n')
+
+with open("../output/test.txt", "w") as wf:
+    for i in range(197, 217):
+        if i>197:
+            wf.write("\n")
+        for token in all_tokens[i]:
+            wf.write(token+'\n')
+
+print(all_tokens[0])
