@@ -1,15 +1,13 @@
 
-with open("../data/label_test_40_epoch_new_data.txt", "r") as f:
+with open("../data/cv_evaultaion_data.txt", "r") as f:
     match_cnt = 0
     mismatch_cnt = 0
     true_pos_dict = dict()
     false_pos_dict = dict()
 
-    space_cnt = 0
-
     for line in f:
         line = line.strip()
-        tokens = line.split("\t")
+        tokens = line.split(" ")
         print(line)
         print(tokens)
         if len(tokens)==3:
@@ -25,10 +23,7 @@ with open("../data/label_test_40_epoch_new_data.txt", "r") as f:
                 if label not in false_pos_dict.keys():
                     false_pos_dict[label] = 0
                 false_pos_dict[label] += 1
-        elif len(tokens)<3:
-            space_cnt += 1
 
-    print("new_lint_cnt: ", space_cnt)
     print("match:", match_cnt)
     print("mis match:", mismatch_cnt)
     print("accuracy:", match_cnt/(match_cnt + mismatch_cnt))
