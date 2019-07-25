@@ -8,26 +8,26 @@ json_data = None
 
 text = ""
 cnt = 0
-with open('../data/cv-tagging-enhanced-duration.json', 'r', encoding="utf-8") as f:
+with open('../data/train_696.json', 'r', encoding="utf-8") as f:
     for line in f:
         if cnt>0:
             text += ","
         text += ""+line
         cnt = cnt + 1
 
-with open('../data/cv-tagging-test.json', 'r', encoding="utf-8") as f:
-    for line in f:
-        if cnt>0:
-            text += ","
-        text += ""+line
-        cnt = cnt + 1
+# with open('../data/cv-tagging-test.json', 'r', encoding="utf-8") as f:
+#     for line in f:
+#         if cnt>0:
+#             text += ","
+#         text += ""+line
+#         cnt = cnt + 1
 
 text = "[" + text + "]"
 json_data = json.loads(text)
 print("data len:", len(json_data))
-print(json_data[0].keys())
+#print(json_data[0].keys())
 
-print(json_data[0]['annotation'])
+#print(json_data[0]['annotation'])
 
 annotations = json_data[0]['annotation']
 text = json_data[0]['content']
@@ -49,6 +49,9 @@ def create_label_map(json_cvs):
                 if len(labels)==0:
                     continue
                 elif len(labels)>1:
+                    print("=================================")
+                    print(labels)
+                    print(json_cv['content'])
                     raise Exception("More than one label found.")
                 label = labels[0]
                 if label not in key_to_idx:
@@ -70,6 +73,8 @@ def init_mat(cv_data, key_to_idx):
             if len(labels) == 0:
                 continue
             elif len(labels) > 1:
+                print("=================================")
+                print(labels)
                 raise Exception("More than one label found.")
             label = labels[0]
             label_idx = key_to_idx[label]
@@ -147,25 +152,30 @@ for cv_data in json_data:
     tokens = parse_ner_tokens(cv_data, idx_to_key, np_cv_map)
     all_tokens.append(tokens)
     cv_cnt += 1
-    sys.stdout.write("\r%d%% completed" % cv_cnt)
+    sys.stdout.write("\r%d%% completed" % (cv_cnt*100/len(json_data)))
     sys.stdout.flush()
 
+import math
+dev_cv_cnt = math.floor(cv_cnt/10)
+test_cv_cnt = math.floor(cv_cnt/10)
+train_cv_cnt = cv_cnt - dev_cv_cnt - dev_cv_cnt
+print("total_cv, train, dev, test", cv_cnt, train_cv_cnt, dev_cv_cnt, test_cv_cnt)
 with open("../output/train.txt", "w") as wf:
-    for i in range(0, 187):
+    for i in range(0, train_cv_cnt): #187
         if i>0:
             wf.write("\n")
         for token in all_tokens[i]:
             wf.write(token+'\n')
 
 with open("../output/dev.txt", "w") as wf:
-    for i in range(187, 197):
+    for i in range(train_cv_cnt, train_cv_cnt + dev_cv_cnt): # 187,197
         if i>187:
             wf.write("\n")
         for token in all_tokens[i]:
             wf.write(token+'\n')
 
 with open("../output/test.txt", "w") as wf:
-    for i in range(197, 217):
+    for i in range(train_cv_cnt + dev_cv_cnt, train_cv_cnt + dev_cv_cnt+test_cv_cnt): #197, 217
         if i>197:
             wf.write("\n")
         for token in all_tokens[i]:
