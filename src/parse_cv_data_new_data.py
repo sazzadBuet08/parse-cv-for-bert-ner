@@ -125,7 +125,10 @@ def parse_ner_tokens(cv_data, idx_to_key, np_tag_array):
                 else:
                     name = idx_to_key[tag_idx]
                     tag = name.replace(" ", "_")
-
+                if tag == "add":
+                    tag = "Additional_Info"
+                elif tag =='achive':
+                    tag ='Achievements'
                 #print(cur_token, tag, token.idx, token_idx, cur_token)
                 tokens.append(cur_token + " " + tag)
 
@@ -169,14 +172,14 @@ with open("../output/train.txt", "w") as wf:
 
 with open("../output/dev.txt", "w") as wf:
     for i in range(train_cv_cnt, train_cv_cnt + dev_cv_cnt): # 187,197
-        if i>187:
+        if i>train_cv_cnt:
             wf.write("\n")
         for token in all_tokens[i]:
             wf.write(token+'\n')
 
 with open("../output/test.txt", "w") as wf:
     for i in range(train_cv_cnt + dev_cv_cnt, train_cv_cnt + dev_cv_cnt+test_cv_cnt): #197, 217
-        if i>197:
+        if i>train_cv_cnt + dev_cv_cnt:
             wf.write("\n")
         for token in all_tokens[i]:
             wf.write(token+'\n')

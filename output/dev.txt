@@ -1,4 +1,3 @@
-
 CURRICULUM Personal_Info
 VITAE Personal_Info
    Personal_Info
