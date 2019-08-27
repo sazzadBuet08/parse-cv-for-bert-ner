@@ -8,7 +8,8 @@ json_data = None
 
 text = ""
 cnt = 0
-with open('../data/train_696.json', 'r', encoding="utf-8") as f:
+#with open('../data/train_696.json', 'r', encoding="utf-8") as f:
+with open('../data/Education_annotation_by_all.json', 'r', encoding="utf-8") as f:
     for line in f:
         if cnt>0:
             text += ","
@@ -43,21 +44,22 @@ def create_label_map(json_cvs):
     cnt = 0
     for json_cv in json_cvs:
         annotations = json_cv["annotation"]
-        for annotation in annotations:
-            if "label" in annotation.keys():
-                labels = annotation["label"]
-                if len(labels)==0:
-                    continue
-                elif len(labels)>1:
-                    print("=================================")
-                    print(labels)
-                    print(json_cv['content'])
-                    raise Exception("More than one label found.")
-                label = labels[0]
-                if label not in key_to_idx:
-                    cnt += 1
-                    key_to_idx[label] = cnt
-                    idx_to_key[cnt] = label
+        if annotations != None:
+            for annotation in annotations:
+                if "label" in annotation.keys():
+                    labels = annotation["label"]
+                    if len(labels)==0:
+                        continue
+                    elif len(labels)>1:
+                        print("=================================")
+                        print(labels)
+                        print(json_cv['content'])
+                        raise Exception("More than one label found.")
+                    label = labels[0]
+                    if label not in key_to_idx:
+                        cnt += 1
+                        key_to_idx[label] = cnt
+                        idx_to_key[cnt] = label
 
     return key_to_idx, idx_to_key
 
@@ -67,22 +69,23 @@ def init_mat(cv_data, key_to_idx):
     n_tag_array = np.empty(content_len)
     n_tag_array.fill(0)
     annotations = cv_data["annotation"]
-    for annotation in annotations:
-        if "label" in annotation.keys():
-            labels = annotation["label"]
-            if len(labels) == 0:
-                continue
-            elif len(labels) > 1:
-                print("=================================")
-                print(labels)
-                raise Exception("More than one label found.")
-            label = labels[0]
-            label_idx = key_to_idx[label]
-            for point in annotation["points"]:
-                start = point["start"]
-                end = point["end"]
-                for idx in range(start, end+1):
-                    n_tag_array[idx] = label_idx
+    if annotations != None:
+        for annotation in annotations:
+            if "label" in annotation.keys():
+                labels = annotation["label"]
+                if len(labels) == 0:
+                    continue
+                elif len(labels) > 1:
+                    print("=================================")
+                    print(labels)
+                    raise Exception("More than one label found.")
+                label = labels[0]
+                label_idx = key_to_idx[label]
+                for point in annotation["points"]:
+                    start = point["start"]
+                    end = point["end"]
+                    for idx in range(start, end+1):
+                        n_tag_array[idx] = label_idx
 
     return n_tag_array
 
@@ -109,11 +112,15 @@ def parse_ner_tokens(cv_data, idx_to_key, np_tag_array):
 
 
             doc = nlp(cur_line)
-
+            space_index = list()
             for token in doc:
                 cur_token = token.text
+                temp_val= cur_token
                 cur_token = cur_token.encode("ascii", "ignore")
                 cur_token = str(cur_token, 'ascii')
+                if len(cur_token) > 0 and cur_token[0] == " ":
+                    space_index.append(token.idx)
+                    continue
                 if len(cur_token)==0:
                     continue
                 token_idx = token.idx+line_start_idx
@@ -131,6 +138,12 @@ def parse_ner_tokens(cv_data, idx_to_key, np_tag_array):
                     tag ='Achievements'
                 #print(cur_token, tag, token.idx, token_idx, cur_token)
                 tokens.append(cur_token + " " + tag)
+             
+#             if(len(space_index) > 0):
+#                 print("================== SPACE INDEX========================")
+#                 print(cur_line)
+#                 print(space_index)
+#                 print("==========================================")
 
     return tokens
 
@@ -184,4 +197,10 @@ with open("../output/test.txt", "w") as wf:
         for token in all_tokens[i]:
             wf.write(token+'\n')
 
+with open("../output/all_content.txt", "w") as wf:
+    for i in range(0, train_cv_cnt + dev_cv_cnt+test_cv_cnt): #whole
+        if i>0:
+            wf.write("\n")
+        for token in all_tokens[i]:
+            wf.write(token+'\n')
 print(all_tokens[0])

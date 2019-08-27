@@ -1,5 +1,5 @@
 
-with open("../data/label_test_40_epoch_new_data.txt", "r") as f:
+with open("../data/label_test_education_all_train_test_dev.txt", "r") as f: #label_tes_40_epch_segmentationt.txt #/label_test_600_epoch_segment.txt 
     match_cnt = 0
     mismatch_cnt = 0
     true_pos_dict = dict()
